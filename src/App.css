@@ -42,7 +42,7 @@ a:hover {
 }
 
 .App-header {
-  background-color: #000; /* match the dark forest theme */
+  background-color: #000; 
   min-height: 100vh;
   padding-top: 80px; /* space for navbar */
   display: flex;

@@ -19,6 +19,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  
 }
 
 .navbar-logo {
@@ -28,9 +29,25 @@
 
 .navbar-brand {
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 800; /* Extra bold for logo look */
+  font-family: 'Montserrat', sans-serif;
   white-space: nowrap;
+  
+  letter-spacing: 0.25em; /* Optional: adds spacing like in the image */
+   background: linear-gradient(
+    to right,
+    #c0c0c0,
+    #e0e0e0,
+    #aaaaaa,
+    #f2f2f2,
+    #999999
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
+
 
 .navbar-brand span {
   color: #fff;
@@ -122,7 +139,6 @@
   transition: width 0.3s ease;
 }
 
-.navbar-links .nav-link:hover::after,
 .navbar-links .nav-link.active::after {
   width: 100%;
 }

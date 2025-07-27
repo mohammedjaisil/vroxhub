@@ -17,7 +17,7 @@ const Hero = () => {
       </video>
 
       <div className="content-overlay">
-        <h1>Welcome to VoxHub</h1>
+        <h1>WELCOME TO VROXHUB</h1>
         <p>Crafting engaging visuals for the modern world.</p>
       </div>
     </div>
