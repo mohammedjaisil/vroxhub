@@ -5,39 +5,65 @@ import React, { useEffect } from 'react';
 import { Navbar } from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
 import SocialBar from './Components/Hero/SocialBar';
-import { Routes,Route} from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home';
-import Services from './Pages/Services';
+import Service from './Pages/Service';
 import Industries from './Pages/Industries';
 import Portfolio from './Pages/Portfolio';
 import Costomers from './Pages/Costomers';
 import Company from './Pages/Company';
-import RippleEffect from './Components/Effects/RippleEffect'; // adjust path
+import RippleEffect from './Components/Effects/RippleEffect';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import Upload from './Components/Upload';
+import { FaWhatsapp, FaPhoneAlt } from 'react-icons/fa';
+import './GlobalIcons.css';
+
 function App() {
   useEffect(() => {
     AOS.init({
-      duration: 1000,   // animation duration (ms)
-      once: true,       // only animate once
-      offset: 120,      // trigger point from bottom
+      duration: 1000,
+      once: true,
+      offset: 120,
     });
   }, []);
+
   return (
-    <div >
+    <div>
       <Navbar />
       <RippleEffect />
       <SocialBar />
+      
+      {/* ✅ Only Route components inside Routes */}
       <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/services' element={<Services/>}/>
-        <Route path='/industries' element={<Industries/>}/>
-        <Route path='/portfolio' element={<Portfolio/>}/>
-        <Route path='/costomers' element={<Costomers/>}/>
-        <Route path='/company' element={<Company/>}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/service" element={<Service />} />
+        <Route path="/industries" element={<Industries />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/costomers" element={<Costomers />} />
+        <Route path="/company" element={<Company />} />
       </Routes>
+
+      {/* ✅ Place icons OUTSIDE of Routes */}
+      <a
+        href="https://wa.me/971505051495"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="floating-icon whatsapp"
+      >
+        <FaWhatsapp />
+      </a>
+
+      <a
+        href="tel:+971505051495"
+        className="floating-icon call"
+      >
+        <FaPhoneAlt />
+      </a>
+
       <Footer />
     </div>
   );

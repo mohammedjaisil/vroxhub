@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Services from '../Components/Services/Services';
-export class Industries extends Component {
+export class Service extends Component {
   static propTypes = {}
 
   render() {
@@ -15,4 +15,4 @@ export class Industries extends Component {
 }
 
 
-export default Industries
+export default Service

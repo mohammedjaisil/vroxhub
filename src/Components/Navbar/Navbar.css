@@ -105,6 +105,14 @@
   .navbar-links a {
     font-size: 18px;
   }
+  .get-in-touch-btn {
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    padding: 12px;
+    margin-top: 10px;
+  }
+
 }
 /* Shared NavLink styles */
 .navbar-links .nav-link {
@@ -146,4 +154,23 @@
 /* Active underline always visible */
 .navbar-links .nav-link.active::after {
   width: 100%;
+}
+
+
+.get-in-touch-btn {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #fff;
+  padding: 8px 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.get-in-touch-btn:hover {
+  background-color: #222;
+  color: #e0e0e0;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.2);
 }

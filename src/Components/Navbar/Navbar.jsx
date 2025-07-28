@@ -37,11 +37,14 @@ export const Navbar = () => {
 
   <div className={`navbar-links ${menuOpen ? 'active' : ''}`}>
     <NavLink to="/" onClick={handleLinkClick} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Home</NavLink>
-    <NavLink to="/services" onClick={handleLinkClick} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Services</NavLink>
-    <NavLink to="/industries" onClick={handleLinkClick} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Industries</NavLink>
+    <NavLink to="/service" onClick={handleLinkClick} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Services</NavLink>
+    {/* <NavLink to="/industries" onClick={handleLinkClick} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Industries</NavLink>
     <NavLink to="/portfolio" onClick={handleLinkClick} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Portfolio</NavLink>
     <NavLink to="/costomers" onClick={handleLinkClick} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Costomers</NavLink>
-    <NavLink to="/company" onClick={handleLinkClick} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Company</NavLink>
+    <NavLink to="/company" onClick={handleLinkClick} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Company</NavLink> */}
+    <button className="get-in-touch-btn" onClick={() => alert("Redirect to contact or open modal")}>
+  Get in Touch
+</button>
   </div>
 
 </nav>
