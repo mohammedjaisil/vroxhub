@@ -14,7 +14,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:4000/login", { email, password });
+      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/login`, { email, password });
       if (res.data.success) {
         localStorage.setItem("token", res.data.token);
         navigate("/");

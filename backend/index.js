@@ -1,235 +1,174 @@
-const port = 4000;
-const express = require("express");
+require('dotenv').config();
+console.log('Mongo URI:', process.env.MONGO_URI);
+
+const express = require('express');
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+const cors = require('cors');
+const bcrypt = require('bcryptjs');
+
 const app = express();
-const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
-const multer = require("multer");
-const path = require("path");
-const cors = require("cors");
-const { error } = require("console");
-const { type } = require("os");
-const bcrypt = require("bcryptjs");
+const port = 1000;
 
 app.use(express.json());
 app.use(cors());
 
-
-//database connection with mongodb
-
-mongoose.connect("mongodb+srv://vroxhub:vroxhub@cluster0.teow9ey.mongodb.net/photography")
-
-//Api creation 
-app.get("/",(req,res)=>{
-    res.send("express app is running")
+// Connect to MongoDB using environment variable
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 })
+.then(() => console.log('✅ Connected to MongoDB'))
+.catch((err) => console.error('❌ MongoDB connection error:', err));
 
-//image storage engine 
+// Serve static images folder
+app.use('/images', express.static('upload/images'));
 
+// Multer storage engine for images
 const storage = multer.diskStorage({
-    destination: './upload/images',
-    filename:(req,file,cb)=>{
-        return cb(null,`${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)
-    }
-})
+  destination: './upload/images',
+  filename: (req, file, cb) => {
+    cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`);
+  }
+});
+const upload = multer({ storage: storage });
 
+// Routes
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.send('Express app is running');
+});
 
-const upload = multer({storage:storage})
+// Upload image endpoint
+app.post('/upload', upload.single('product'), (req, res) => {
+  res.json({
+    success: 1,
+    image_url: `http://localhost:${port}/images/${req.file.filename}`
+  });
+});
 
+// Product Schema & Model
+const Product = mongoose.model('Product', {
+  id: { type: Number, required: true },
+  name: { type: String, required: true },
+  image: { type: String, required: true },
+  category: { type: String, required: true },
+  new_price: { type: Number, required: true },
+  old_price: { type: Number, required: true },
+  date: { type: Date, default: Date.now },
+  available: { type: Boolean, default: true }
+});
 
-//creating upload endpoint for image 
-
-app.use('/images',express.static('upload/images'))
-app.post("/upload",upload.single('product'),(req,res)=>{
-    res.json({
-        success:1,
-        image_url:`http://localhost:${port}/images/${req.file.filename}`
-    })
-})
-
-
-//schema for creating products
-const Product = mongoose.model("Product",{
-    id :{
-        type:Number,
-        required:true,
-    },
-    name :{
-        type: String,
-        required:true,
-
-    },
-    image:{
-        type: String,
-        required:true,
-    },
-    category:{
-        type: String,
-        required:true,
-    },
-    new_price:{
-        type: Number,
-        required:true,
-    },
-    old_price:{
-        type: Number,
-        required:true,
-    },
-    date:{
-        type: Date,
-        default:Date.now,
-    },
-    available:{
-        type:Boolean,
-        default:true,
-    },
-
-
-}) 
-
-app.post('/addproduct',async (req,res)=>{
-    let products = await Product.find({});
-    let id;
-    if(products.length>0){
-        let last_product_array = products.slice(-1);
-        let last_product = last_product_array[0];
-        id = last_product.id+1;
-    }else{
-        id=1;
+// Add product
+app.post('/addproduct', async (req, res) => {
+  try {
+    const products = await Product.find({});
+    let id = 1;
+    if (products.length > 0) {
+      id = products[products.length - 1].id + 1;
     }
     const product = new Product({
-        id:id,
-        name:req.body.name,
-        image:req.body.image,
-        category:req.body.category,
-        new_price:req.body.new_price,
-        old_price:req.body.old_price,
+      id,
+      name: req.body.name,
+      image: req.body.image,
+      category: req.body.category,
+      new_price: req.body.new_price,
+      old_price: req.body.old_price,
     });
-    console.log(product);   
     await product.save();
-    console.log("saved");
-    res.json({
-        success:true,
-        name:req.body.name, 
-    })
-})
+    res.json({ success: true, name: req.body.name });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
+// Remove product
+app.post('/removeproduct', async (req, res) => {
+  try {
+    await Product.findOneAndDelete({ id: req.body.id });
+    res.json({ success: true, name: req.body.name });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
-//creating api for delete products
+// Get all products
+app.get('/allproducts', async (req, res) => {
+  try {
+    const products = await Product.find({});
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
-app.post('/removeproduct',async (req,res)=>{
-    await Product.findOneAndDelete({id:req.body.id});
-    console.log("Removed");
-    res.json({
-        success:true,
-        name:req.body.name
-    })
+// User Schema & Model
+const Users = mongoose.model('Users', {
+  name: { type: String },
+  email: { type: String, unique: true },
+  password: { type: String },
+  cartData: { type: Object },
+  date: { type: Date, default: Date.now }
+});
 
-})
-
-
-//creating api for getting all product
-
-app.get('/allproducts',async(req,res)=>{
-    let products = await Product.find({});
-    console.log('all products fetched');
-    res.send(products);
-})
-
-
-//schema creating for user model
-
-const Users = mongoose.model('Users',{
-    name:{
-        type:String,
-    },
-    email:{
-        type:String,
-        unique:true,
-    },
-    password:{
-        type:String,
-    },
-    cartData:{
-        type:Object,
-    },
-    date:{
-        type:Date,
-        default:Date.now
-    }
-})
-
-
-
-// signup endpoint
+// Signup
 app.post('/signup', async (req, res) => {
-    let check = await Users.findOne({ email: req.body.email });
-    if (check) {
-        return res.status(400).json({ success: false, errors: "User already exists with this email" });
+  try {
+    let userExists = await Users.findOne({ email: req.body.email });
+    if (userExists) {
+      return res.status(400).json({ success: false, errors: "User already exists with this email" });
     }
 
-    let cart = {};
+    const cart = {};
     for (let i = 0; i < 300; i++) {
-        cart[i] = 0;
+      cart[i] = 0;
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     const user = new Users({
-        name: req.body.username,
-        email: req.body.email,
-        password: hashedPassword,
-        cartData: cart,
+      name: req.body.username,
+      email: req.body.email,
+      password: hashedPassword,
+      cartData: cart,
     });
 
     await user.save();
 
     const data = { user: { id: user.id } };
-    const token = jwt.sign(data, 'secret_ecom', { expiresIn: "1h" });
+    const token = jwt.sign(data, 'secret_ecom', { expiresIn: '1h' });
 
     res.json({ success: true, token });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
-// login endpoint
+// Login
 app.post('/login', async (req, res) => {
-    let user = await Users.findOne({ email: req.body.email });
+  try {
+    const user = await Users.findOne({ email: req.body.email });
     if (!user) {
-        return res.json({ success: false, errors: "Email not found" });
+      return res.json({ success: false, errors: "Email not found" });
     }
 
     const isMatch = await bcrypt.compare(req.body.password, user.password);
     if (!isMatch) {
-        return res.json({ success: false, error: "Invalid password" });
+      return res.json({ success: false, error: "Invalid password" });
     }
 
     const data = { user: { id: user.id } };
-    const token = jwt.sign(data, 'secret_ecom', { expiresIn: "1h" });
+    const token = jwt.sign(data, 'secret_ecom', { expiresIn: '1h' });
 
     res.json({ success: true, token });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
-
-
-
-app.listen(port,(error)=>{
-    if (!error){
-        console.log("server running on port" +port)
-    }
-    else{
-        console.log("error" +error)
-    }
-})
-
-
-
-mongoose.connect("mongodb+srv://vroxhub:vroxhub@cluster0.teow9ey.mongodb.net/photography", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 10000, // 10 seconds
-})
-.then(() => {
-    console.log("✅ Connected to MongoDB");
-})
-.catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
