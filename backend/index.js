@@ -146,8 +146,11 @@ app.post('/signup', async (req, res) => {
     const token = jwt.sign(data, 'secret_ecom', { expiresIn: '1h' });
 
     res.json({ success: true, token });
-  } catch (error) {
-    console.error("❌ Signup error:", error);  // Log error
+   } catch (error) {
+    console.error("Signup error:", error);
+    if (error.name === 'MongoError' && error.code === 11000) {
+      return res.status(400).json({ success: false, error: 'Email is already registered' });
+    }
     res.status(500).json({ success: false, error: error.message });
   }
 });
