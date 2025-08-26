@@ -117,8 +117,11 @@ const Users = mongoose.model('Users', {
 // Signup
 app.post('/signup', async (req, res) => {
   try {
+    console.log("🟢 Signup attempt with:", req.body);  // Log incoming data
+
     let userExists = await Users.findOne({ email: req.body.email });
     if (userExists) {
+      console.log("🔴 User already exists");
       return res.status(400).json({ success: false, errors: "User already exists with this email" });
     }
 
@@ -137,12 +140,14 @@ app.post('/signup', async (req, res) => {
     });
 
     await user.save();
+    console.log("✅ User saved:", user.email);
 
     const data = { user: { id: user.id } };
     const token = jwt.sign(data, 'secret_ecom', { expiresIn: '1h' });
 
     res.json({ success: true, token });
   } catch (error) {
+    console.error("❌ Signup error:", error);  // Log error
     res.status(500).json({ success: false, error: error.message });
   }
 });
