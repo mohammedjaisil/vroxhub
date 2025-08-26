@@ -10,7 +10,11 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 
 const app = express();
-const port = 1000;
+const port = process.env.PORT || 1000;
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
 
 app.use(express.json());
 app.use(cors());
