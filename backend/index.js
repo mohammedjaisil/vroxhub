@@ -184,3 +184,10 @@ app.post('/login', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+
+
+
+console.log('Mongo URI:', process.env.MONGO_URI);
+console.log('Base URL:', process.env.BASE_URL);
+console.log('Port:', process.env.PORT);

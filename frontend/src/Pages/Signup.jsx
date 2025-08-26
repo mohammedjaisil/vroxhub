@@ -127,5 +127,6 @@ const handleSignup = async (e) => {
     </div>
   );
 };
+console.log('API base URL:', process.env.REACT_APP_API_BASE_URL);
 
 export default Signup;
